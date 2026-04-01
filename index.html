@@ -13552,10 +13552,8 @@ function resetMarketFilters() {
 // ---------------------------------------------
 const BACKEND_URL =
   window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://aa2347769813.ngrok-free.app";
-
-
+    ? "http://localhost:3000"
+    : " https://c100-102-213-251-137.ngrok-free.app";
 // ------------------------------------------------------------
 // ✅ Payment Modal UI + Improved Title Logic + Phone Prefill
 // ------------------------------------------------------------
@@ -13749,8 +13747,12 @@ async function initiateStkPayment(type, amount, itemId, itemName, event) {
 
     // Polling
     pollPayment(accountReference, (statusData) => {
-      if (statusData.ResultCode === 0) {
-        statusEl.innerText = "🎉 Payment successful!";
+   if (statusData.ResultCode === 0) {
+
+  statusEl.innerText = "🎉 Payment successful!";
+
+  // 🔓 reveal contacts immediately
+  revealUnlockedContacts(itemId);
 
         if (type === "verify") {
           verifyDriverPayment(itemId, amount);
@@ -13776,7 +13778,29 @@ async function initiateStkPayment(type, amount, itemId, itemName, event) {
   }
 }
 
+// ===============================
+// 🔓 UNBLUR CONTACTS AFTER PAYMENT
+// ===============================
+function revealUnlockedContacts(itemId) {
 
+  // find all blurred contact elements
+  document.querySelectorAll(".blurred-contact").forEach(el => {
+
+    const realContact = el.getAttribute("data-contact");
+
+    if (realContact) {
+      el.textContent = realContact; // show full contact
+      el.classList.remove("blurred-contact");
+
+      // remove blur styling if parent has blur
+      if (el.closest(".blurred")) {
+        el.closest(".blurred").classList.remove("blurred");
+      }
+    }
+
+  });
+
+}
 // ---------------------------------------------
 // ✅ Retry Function
 // ---------------------------------------------
