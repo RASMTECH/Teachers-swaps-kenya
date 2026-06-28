@@ -761,29 +761,26 @@ button:hover{
       Enter three counties and let the system detect a complete swap cycle.
     </p>
 
-    <select id="triCountyA">
-      <option value="">📍 Enter County A</option>
-    </select>
+<button
+onclick="showTriangularGuide()"
+style="
+width:100%;
+margin-bottom:10px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+border:none;
+padding:14px;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+">
+ℹ️ How Triangular Swaps Work
+</button>
 
-    <select id="triCountyB">
-      <option value="">📍 Enter County B</option>
-    </select>
-
-    <select id="triCountyC">
-      <option value="">📍 Enter County C</option>
-    </select>
-
-    <button
-      onclick="findTriangularSwap()"
-      style="
-        background:linear-gradient(135deg,#f59e0b,#d97706);
-        margin-top:10px;
-        font-size:16px;
-        font-weight:700;
-      "
-    >
-      🔍 Find Triangular Swap
-    </button>
+ <button onclick="findTriangularSwap()">
+    🔺 Scan Entire Database
+</button>
 
     <div style="
       margin-top:12px;
@@ -1039,41 +1036,39 @@ window.postSwap = async function(){
     const generatedName =
       "Teacher " + Date.now().toString().slice(-6);
 
-    // ==========================
-    // PREMIUM COUNTIES
-    // ==========================
+  // ==========================
+// PREMIUM (HOT) COUNTIES
+// ==========================
 
-    const premiumCounties = [
-      "Nairobi",
-      "Mombasa",
-      "Kisumu"
-    ];
+const premiumCounties = [
+  "Nairobi",
+  "Nairobi City",
+  "Mombasa",
+  "Kisumu",
+  "Kiambu"
+];
 
-    const hardship =
-      document.getElementById("hardship")?.value || "No";
+const hardship =
+  document.getElementById("hardship")?.value || "No";
 
-    const currentCounty =
-      document.getElementById("currentCounty")?.value?.trim() || "";
+const currentCounty =
+  document.getElementById("currentCounty")?.value?.trim() || "";
 
-    const swapCounty =
-      document.getElementById("swapCounty")?.value?.trim() || "";
+const swapCounty =
+  document.getElementById("swapCounty")?.value?.trim() || "";
 
-    // ==========================
-    // AUTO PRICING
-    // ==========================
+// ==========================
+// AUTO PRICING
+// ==========================
 
-    let charge = 200;
+let charge = 200;
 
-    if(hardship === "Yes"){
-      charge = 500;
-    }
-    else if(
-      premiumCounties.includes(currentCounty) ||
-      premiumCounties.includes(swapCounty)
-    ){
-      charge = 400;
-    }
-
+if (hardship === "Yes") {
+  charge = 500;
+}
+else if (premiumCounties.includes(currentCounty)) {
+  charge = 400;
+}
     // ==========================
     // PHONE CLEANUP
     // ==========================
@@ -1335,20 +1330,133 @@ container.innerHTML = "";
 
 const myPhone = localStorage.getItem("myPhone");
 
+// ==========================
+// PREMIUM COUNTIES (HOT ZONES)
+// ==========================
 const premiumCounties = [
-"Nairobi",
-"Mombasa",
-"Kisumu"
+  "Nairobi",
+  "Nairobi City",
+  "Mombasa",
+  "Kisumu",
+  "Kiambu"
 ];
-
 swaps.forEach(item=>{
+const matchedTeacher = allSwaps.find(other =>
 
-const match = allSwaps.some(other =>
-  other !== item &&
-  other.currentCounty?.toLowerCase() === item.swapCounty?.toLowerCase() &&
-  other.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+    other !== item &&
+
+    other.level === item.level &&
+
+    other.currentCounty?.toLowerCase() === item.swapCounty?.toLowerCase() &&
+
+    other.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
 );
 
+const match = !!matchedTeacher;
+// =====================================
+// AI MATCH ANALYSIS
+// =====================================
+
+const directMatches = allSwaps.filter(other =>
+
+    other !== item &&
+
+    other.level === item.level &&
+
+    other.currentCounty?.toLowerCase() === item.swapCounty?.toLowerCase() &&
+
+    other.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
+);
+
+// ---------- TRIANGULAR ----------
+
+const triangularMatches = [];
+
+allSwaps.forEach(second=>{
+
+    if(second === item) return;
+    if(second.level !== item.level) return;
+
+    allSwaps.forEach(third=>{
+
+        if(
+            third === item ||
+            third === second
+        ) return;
+
+        if(third.level !== item.level) return;
+
+        if(
+
+            item.swapCounty?.toLowerCase() === second.currentCounty?.toLowerCase() &&
+
+            second.swapCounty?.toLowerCase() === third.currentCounty?.toLowerCase() &&
+
+            third.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
+        ){
+
+            triangularMatches.push({
+                second,
+                third
+            });
+
+        }
+
+    });
+
+});
+
+// ---------- FOUR WAY ----------
+
+const fourWayMatches = [];
+
+allSwaps.forEach(second=>{
+
+    if(second===item) return;
+
+    allSwaps.forEach(third=>{
+
+        if(
+            third===item ||
+            third===second
+        ) return;
+
+        allSwaps.forEach(fourth=>{
+
+            if(
+                fourth===item ||
+                fourth===second ||
+                fourth===third
+            ) return;
+
+            if(
+
+                item.swapCounty===second.currentCounty &&
+
+                second.swapCounty===third.currentCounty &&
+
+                third.swapCounty===fourth.currentCounty &&
+
+                fourth.swapCounty===item.currentCounty
+
+            ){
+
+                fourWayMatches.push({
+                    second,
+                    third,
+                    fourth
+                });
+
+            }
+
+        });
+
+    });
+
+});
 const isMine = myPhone === item.phone;
 
 const refCode =
@@ -1371,10 +1479,7 @@ const charge = Number(
   (
     hardshipStatus === "yes"
       ? 500
-      : (
-          premiumCounties.includes(item.currentCounty) ||
-          premiumCounties.includes(item.swapCounty)
-        )
+      : premiumCounties.includes(item.currentCounty)
         ? 400
         : 200
   )
@@ -1572,36 +1677,273 @@ card.innerHTML = `
 
   ${phoneHTML}
 
-  ${
-    match
-    ? `
-      <div style="
-        margin-top:12px;
-        background:#dcfce7;
-        color:#166534;
-        padding:10px;
-        border-radius:10px;
-        font-weight:700;
-      ">
-        🎯 Possible Swap Match Found
-      </div>
-    `
-    : ""
-  }
+${
+match
+?
+`
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#16a34a,#15803d);
+color:white;
+padding:15px;
+border-radius:12px;
+">
 
-  ${
-    item.notes
-    ? `
-      <div style="
-        margin-top:15px;
-        padding-top:10px;
-        border-top:1px solid #e5e7eb;
-      ">
-        📝 ${item.notes}
-      </div>
-    `
-    : ""
-  }
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+">
+🎉 DIRECT MATCH FOUND!
+</div>
+
+<div style="line-height:1.8">
+
+A teacher wants your current county.
+
+<br><br>
+
+<b>Current:</b>
+${matchedTeacher.currentCounty}
+
+➡️
+
+<b>Wants:</b>
+${matchedTeacher.swapCounty}
+
+<br><br>
+
+<b>Subjects:</b>
+${matchedTeacher.subjects}
+
+</div>
+
+<button
+
+onclick="showPayment(
+'${matchedTeacher.swapId}',
+'${matchedTeacher.name}',
+'${matchedTeacher.currentCounty}',
+'${matchedTeacher.swapCounty}',
+${Number(matchedTeacher.charge||200)}
+)"
+
+style="
+margin-top:12px;
+width:100%;
+background:#facc15;
+color:#111;
+padding:12px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🔓 Unlock Your Direct Match
+
+</button>
+
+</div>
+
+<!-- AI ANALYSIS -->
+
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:18px;
+border-radius:14px;
+color:white;
+border:2px solid #22c55e;
+">
+
+<div style="
+font-size:20px;
+font-weight:bold;
+color:#facc15;
+margin-bottom:12px;
+">
+
+🤖 AI Match Analysis
+
+</div>
+
+<div style="
+line-height:2;
+font-size:15px;
+">
+
+🎯 <b>Great News!</b>
+
+<br><br>
+
+✅ <b>${directMatches.length}</b> Direct Match(s)
+
+<br>
+
+🔺 <b>${triangularMatches.length}</b> Triangular Match(s)
+
+<br>
+
+🔄 <b>${fourWayMatches.length}</b> Four-Way Chain Match(s)
+
+</div>
+
+<button
+
+onclick="viewMyMatches('${item.swapId}')"
+
+style="
+margin-top:15px;
+width:100%;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+border:none;
+padding:13px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🚀 View All My Matches
+
+</button>
+
+</div>
+
+`
+:
+`
+
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:18px;
+border-radius:14px;
+color:white;
+border:2px solid #334155;
+">
+
+<div style="
+font-size:20px;
+font-weight:bold;
+color:#facc15;
+margin-bottom:12px;
+">
+
+🤖 AI Match Analysis
+
+</div>
+
+<div style="
+line-height:2;
+font-size:15px;
+">
+
+AI searched thousands of swap requests.
+
+<br><br>
+
+✅ <b>${directMatches.length}</b> Direct Match(s)
+
+<br>
+
+🔺 <b>${triangularMatches.length}</b> Triangular Match(s)
+
+${
+triangularMatches.length
+
+?
+
+`
+<button
+onclick="showTriangularOptions('${item.swapId}')"
+style="
+margin-top:12px;
+width:100%;
+padding:12px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:#fff;
+border:none;
+border-radius:10px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+">
+🔺 View & Unlock ${triangularMatches.length} Triangular Match${triangularMatches.length>1?'es':''}
+</button>
+
+`
+
+:
+
+""
+
+}
+
+<br>
+
+🔄 <b>${fourWayMatches.length}</b> Four-Way Chain Match(s)
+
+</div>
+
+${
+directMatches.length ||
+triangularMatches.length ||
+fourWayMatches.length
+
+?
+
+`
+
+<button
+
+onclick="viewMyMatches('${item.swapId}')"
+
+style="
+margin-top:15px;
+width:100%;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+border:none;
+padding:13px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🚀 View All My Matches
+
+</button>
+
+`
+
+:
+
+`
+
+<div style="
+margin-top:15px;
+padding:12px;
+background:#fef3c7;
+color:#92400e;
+border-radius:10px;
+">
+
+No compatible teachers have been found yet.
+
+We'll continue scanning automatically as new swap requests are posted.
+
+</div>
+
+`
+
+}
+
+</div>
+
+`
+}
 
 `;
 
@@ -1611,7 +1953,145 @@ container.appendChild(card);
 });
 
 }
+window.showTriangularOptions = function(swapId){
 
+    const first = allSwaps.find(x => x.swapId === swapId);
+
+    if(!first){
+        Swal.fire("Not found","","error");
+        return;
+    }
+
+    const triangles = [];
+
+    allSwaps.forEach(second=>{
+
+        if(second.swapId === first.swapId) return;
+
+        allSwaps.forEach(third=>{
+
+            if(
+                third.swapId === first.swapId ||
+                third.swapId === second.swapId
+            ) return;
+
+            if(
+
+                second.currentCounty === first.swapCounty &&
+
+                third.currentCounty === second.swapCounty &&
+
+                third.swapCounty === first.currentCounty
+
+            ){
+
+                triangles.push({
+                    second,
+                    third
+                });
+
+            }
+
+        });
+
+    });
+
+    if(triangles.length===0){
+
+        Swal.fire(
+            "No Triangular Match",
+            "No triangular swaps found.",
+            "info"
+        );
+
+        return;
+
+    }
+
+    let html = "";
+
+    triangles.forEach((t,index)=>{
+
+        html += `
+
+        <div style="
+            background:#f8fafc;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            padding:15px;
+            margin-bottom:15px;
+            text-align:left;
+        ">
+
+            <h3 style="
+                margin-top:0;
+                color:#2563eb;
+            ">
+                🔺 Triangle ${index+1}
+            </h3>
+
+            <b>Teacher 1</b><br>
+
+            👤 ${first.name}<br>
+
+            📍 ${first.currentCounty} ➜ ${first.swapCounty}
+
+            <hr>
+
+            <b>Teacher 2</b><br>
+
+            👤 ${t.second.name}<br>
+
+            📍 ${t.second.currentCounty} ➜ ${t.second.swapCounty}
+
+            <hr>
+
+            <b>Teacher 3</b><br>
+
+            👤 ${t.third.name}<br>
+
+            📍 ${t.third.currentCounty} ➜ ${t.third.swapCounty}
+
+            <br><br>
+
+            <button
+            onclick="unlockTriangularContacts(
+                '${first.swapId}',
+                '${t.second.swapId}',
+                '${t.third.swapId}'
+            )"
+            style="
+                width:100%;
+                background:#16a34a;
+                color:white;
+                border:none;
+                padding:12px;
+                border-radius:10px;
+                font-weight:bold;
+                cursor:pointer;
+            ">
+                🔓 Unlock This Triangle
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+    Swal.fire({
+
+        title:`🔺 ${triangles.length} Triangular Match(es)`,
+
+        width:800,
+
+        html:html,
+
+        confirmButtonText:"Close"
+
+    });
+
+};
 window.showPayment = function(
   swapId,
   teacherName,
@@ -1773,7 +2253,7 @@ Swal.fire({
           font-size:22px;
           font-weight:800;
         ">
-          0721955804
+          0795054571
         </div>
 
         <small>
@@ -1791,7 +2271,7 @@ Swal.fire({
         border-radius:8px;
         font-size:12px;
       ">
-        ⚠️ Contact is released after payment verification.
+        Contact is released after payment verification.
       </div>
 
     </div>
@@ -1837,6 +2317,157 @@ Kindly verify and unlock contact.`;
     }
 
   });
+
+};
+
+window.viewMyMatches = function(swapId){
+
+    const item = allSwaps.find(x=>x.swapId===swapId);
+
+    if(!item) return;
+
+    let direct = 0;
+    let triangle = 0;
+    let four = 0;
+
+    let html = "";
+
+    // ================= DIRECT =================
+
+    const directMatches = allSwaps.filter(other=>
+
+        other!==item &&
+
+        other.level===item.level &&
+
+        other.currentCounty===item.swapCounty &&
+
+        other.swapCounty===item.currentCounty
+
+    );
+
+    if(directMatches.length){
+
+        direct = directMatches.length;
+
+        html += `
+        <h3 style="color:#16a34a">
+        🎯 Direct Matches
+        </h3>
+        `;
+
+        directMatches.forEach(m=>{
+
+            html += `
+            <div style="
+            background:#ecfdf5;
+            padding:12px;
+            border-radius:10px;
+            margin-bottom:10px;
+            ">
+
+            👤 <b>${m.name}</b><br>
+
+            📍 ${m.currentCounty} ➜ ${m.swapCounty}
+
+            </div>
+            `;
+
+        });
+
+    }
+
+    // ================= TRIANGLE =================
+
+    allSwaps.forEach(second=>{
+
+        if(second===item) return;
+
+        allSwaps.forEach(third=>{
+
+            if(third===item || third===second) return;
+
+            if(
+
+                item.swapCounty===second.currentCounty &&
+
+                second.swapCounty===third.currentCounty &&
+
+                third.swapCounty===item.currentCounty
+
+            ){
+
+                triangle++;
+
+            }
+
+        });
+
+    });
+
+    // ================= FOUR WAY =================
+
+    allSwaps.forEach(second=>{
+
+        if(second===item) return;
+
+        allSwaps.forEach(third=>{
+
+            if(third===item || third===second) return;
+
+            allSwaps.forEach(fourth=>{
+
+                if(
+                    fourth===item ||
+                    fourth===second ||
+                    fourth===third
+                ) return;
+
+                if(
+
+                    item.swapCounty===second.currentCounty &&
+
+                    second.swapCounty===third.currentCounty &&
+
+                    third.swapCounty===fourth.currentCounty &&
+
+                    fourth.swapCounty===item.currentCounty
+
+                ){
+
+                    four++;
+
+                }
+
+            });
+
+        });
+
+    });
+
+    html += `
+    <hr>
+
+    <div style="line-height:2">
+
+    🔺 <b>${triangle}</b> Triangular Match(s)
+
+    <br>
+
+    🔄 <b>${four}</b> Four-Way Match(s)
+
+    </div>
+    `;
+
+    Swal.fire({
+
+        title:"🤖 AI Match Report",
+
+        width:750,
+
+        html
+
+    });
 
 };
 window.filterListings = function(){
@@ -1888,7 +2519,7 @@ document.getElementById(
   "triangularCount"
 ).textContent = triangles;
   render(allSwaps);
-renderTriangularSwaps();
+findTriangularSwap();
 });
 function populateTriangularCounties(){
 
@@ -1922,116 +2553,311 @@ ${county}
 }
 
 populateTriangularCounties();
-
 window.findTriangularSwap = function(){
 
-const A =
-document.getElementById("triCountyA").value;
+const result=document.getElementById("triangularResult");
 
-const B =
-document.getElementById("triCountyB").value;
+const found=[];
+const used=new Set();
 
-const C =
-document.getElementById("triCountyC").value;
+// ============================
+// FIND ALL UNIQUE TRIANGLES
+// ============================
 
-const result =
-document.getElementById("triangularResult");
+for(let i=0;i<allSwaps.length;i++){
 
-if(!A || !B || !C){
+    for(let j=0;j<allSwaps.length;j++){
 
-Swal.fire(
-"Missing Counties",
-"Select all 3 counties.",
-"warning"
-);
+        for(let k=0;k<allSwaps.length;k++){
 
-return;
+            if(i===j||j===k||i===k) continue;
+
+            const A=allSwaps[i];
+            const B=allSwaps[j];
+            const C=allSwaps[k];
+
+            if(
+
+                A.swapCounty===B.currentCounty &&
+
+                B.swapCounty===C.currentCounty &&
+
+                C.swapCounty===A.currentCounty
+
+            ){
+
+                const key=[
+
+                    A.swapId,
+                    B.swapId,
+                    C.swapId
+
+                ].sort().join("-");
+
+                if(!used.has(key)){
+
+                    used.add(key);
+
+                    found.push({
+
+                        swap1:A,
+                        swap2:B,
+                        swap3:C,
+
+                        score:100
+
+                    });
+
+                }
+
+            }
+
+        }
+
+    }
+
 }
 
-const swap1 =
-allSwaps.find(x=>
-x.currentCounty === A &&
-x.swapCounty === B
-);
+// Highest score first
+found.sort((a,b)=>b.score-a.score);
 
-const swap2 =
-allSwaps.find(x=>
-x.currentCounty === B &&
-x.swapCounty === C
-);
+if(found.length===0){
 
-const swap3 =
-allSwaps.find(x=>
-x.currentCounty === C &&
-x.swapCounty === A
-);
+result.innerHTML=`
 
-if(!swap1 || !swap2 || !swap3){
-
-result.innerHTML = `
 <div style="
 background:#fee2e2;
+padding:20px;
+border-radius:14px;
+text-align:center;
 color:#991b1b;
-padding:15px;
-border-radius:10px;
-font-weight:600;
+font-weight:bold;
 ">
-❌ No triangular swap found.
+
+❌ No triangular swap is currently available.
+
+<br><br>
+
+As more teachers register, new triangular matches will automatically appear.
+
 </div>
+
 `;
 
 return;
+
 }
 
-result.innerHTML = `
+// ============================
+// HEADER
+// ============================
+
+let html=`
 
 <div style="
-background:#dcfce7;
-color:#166534;
-padding:15px;
-border-radius:10px;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:20px;
+border-radius:16px;
 ">
 
-<h4>✅ Triangular Match Found</h4>
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+margin-bottom:20px;
+">
 
-<p>
-${A} ➜ ${B}
-</p>
+<h2 style="
+margin:0;
+color:#facc15;
+">
+🔺 ${found.length} Triangular Swap${found.length>1?"s":""} Found
+</h2>
 
-<p>
-${B} ➜ ${C}
-</p>
+<span style="
+background:#16a34a;
+color:white;
+padding:8px 15px;
+border-radius:25px;
+font-weight:bold;
+">
+Auto Matched
+</span>
 
-<p>
-${C} ➜ ${A}
-</p>
+</div>
+
+`;
+
+found.forEach((m,index)=>{
+
+html+=`
+
+<div style="
+background:#1f2937;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+color:white;
+box-shadow:0 8px 25px rgba(0,0,0,.25);
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+">
+
+<h3 style="
+margin:0;
+color:#facc15;
+">
+🔺 Match ${index+1}
+</h3>
+
+<span style="
+background:#22c55e;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+">
+⭐ Perfect Match
+</span>
+
+</div>
+
+<div style="
+margin-top:18px;
+background:#111827;
+padding:15px;
+border-radius:12px;
+line-height:2;
+">
+
+<b>Teacher 1</b><br>
+
+👤 ${m.swap1.name}<br>
+
+🏫 ${m.swap1.level||"-"}<br>
+
+📚 ${m.swap1.subjects||"-"}<br>
+
+📍 ${m.swap1.currentCounty}
+➡️
+${m.swap1.swapCounty}
+
+<hr style="border-color:#374151;">
+
+<b>Teacher 2</b><br>
+
+👤 ${m.swap2.name}<br>
+
+🏫 ${m.swap2.level||"-"}<br>
+
+📚 ${m.swap2.subjects||"-"}<br>
+
+📍 ${m.swap2.currentCounty}
+➡️
+${m.swap2.swapCounty}
+
+<hr style="border-color:#374151;">
+
+<b>Teacher 3</b><br>
+
+👤 ${m.swap3.name}<br>
+
+🏫 ${m.swap3.level||"-"}<br>
+
+📚 ${m.swap3.subjects||"-"}<br>
+
+📍 ${m.swap3.currentCounty}
+➡️
+${m.swap3.swapCounty}
+
+</div>
+
+<div style="
+margin-top:15px;
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+border-left:5px solid #22c55e;
+">
+
+<b>🔄 Swap Flow</b>
+
+<br><br>
+
+${m.swap1.currentCounty}
+
+➡️
+
+${m.swap2.currentCounty}
+
+➡️
+
+${m.swap3.currentCounty}
+
+➡️
+
+${m.swap1.currentCounty}
+
+</div>
+
+<div style="
+margin-top:15px;
+background:#fef9c3;
+color:#854d0e;
+padding:12px;
+border-radius:10px;
+font-weight:600;
+">
+
+💡 All three teachers can exchange stations simultaneously. Contact details remain hidden until payment is verified.
+
+</div>
 
 <button
+
 onclick="unlockTriangularContacts(
-'${swap1.swapId}',
-'${swap2.swapId}',
-'${swap3.swapId}'
+'${m.swap1.swapId}',
+'${m.swap2.swapId}',
+'${m.swap3.swapId}'
 )"
+
 style="
-margin-top:10px;
-background:#dc2626;
-"
->
+margin-top:18px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#dc2626,#991b1b);
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(220,38,38,.35);
+">
+
 🔓 Unlock All 3 Contacts
 (KES 1,000)
+
 </button>
 
 </div>
 
 `;
 
-};
+});
 
-window.unlockTriangularContacts = function(
-id1,
-id2,
-id3
-){
+html+="</div>";
+
+result.innerHTML=html;
+
+};
+window.unlockTriangularContacts = function(id1, id2, id3){
 
 Swal.fire({
 
@@ -2043,16 +2869,12 @@ html:`
 
 <div style="text-align:center">
 
-<h2 style="
-color:#16a34a;
-margin-bottom:10px;
-">
+<h2 style="color:#16a34a;margin-bottom:10px;">
 KES 1,000
 </h2>
 
 <p>
-Unlock all 3 teacher contacts involved
-in this triangular swap.
+Unlock all 3 teacher contacts involved in this triangular swap.
 </p>
 
 <div style="
@@ -2068,8 +2890,7 @@ margin-top:10px;
 0721955804
 </h2>
 
-Pay KES 1,000 then click
-<b>I Have Paid</b>
+Pay KES 1,000 then click <b>I Have Paid</b>
 
 </div>
 
@@ -2078,30 +2899,48 @@ Pay KES 1,000 then click
 `,
 
 showCancelButton:true,
-
 confirmButtonText:'✅ I Have Paid',
-
 confirmButtonColor:'#16a34a'
 
 }).then(result=>{
 
 if(result.isConfirmed){
 
-const message =
+// 🔍 FETCH FULL TEACHER DETAILS (IMPORTANT UPGRADE)
+const t1 = allSwaps.find(x => x.swapId === id1);
+const t2 = allSwaps.find(x => x.swapId === id2);
+const t3 = allSwaps.find(x => x.swapId === id3);
 
-`TRIANGULAR SWAP UNLOCK
+// helper ref generator
+const ref = (x) =>
+  x?.swapId ? x.swapId.slice(-6).toUpperCase() : "NO-REF";
 
-KES 1000 Paid
+const message = `🔺 TRIANGULAR SWAP UNLOCK
 
-Swap IDs:
+💰 KES 1000 PAID
 
-${id1}
+👨‍🏫 TEACHER 1
+Name: ${t1?.name}
+Ref: ${ref(t1)}
+📍 ${t1?.currentCounty} ➜ ${t1?.swapCounty}
+📞 ${t1?.phone}
 
-${id2}
+👨‍🏫 TEACHER 2
+Name: ${t2?.name}
+Ref: ${ref(t2)}
+📍 ${t2?.currentCounty} ➜ ${t2?.swapCounty}
+📞 ${t2?.phone}
 
-${id3}
+👨‍🏫 TEACHER 3
+Name: ${t3?.name}
+Ref: ${ref(t3)}
+📍 ${t3?.currentCounty} ➜ ${t3?.swapCounty}
+📞 ${t3?.phone}
 
-Kindly verify payment and release all 3 contacts.`;
+🔐 ACTION REQUIRED:
+Verify payment and release contacts.
+
+System: Teacher Swap Kenya`;
 
 window.open(
 `https://wa.me/254792755676?text=${encodeURIComponent(message)}`,
@@ -2180,6 +3019,113 @@ window.toggleTriangularSection = function(){
     }
 
 };
+window.showTriangularGuide = function(){
+
+Swal.fire({
+
+title:"🔺 How Triangular Swaps Work",
+
+width:700,
+
+html:`
+
+<div style="
+text-align:left;
+line-height:1.8;
+font-size:15px;
+">
+
+<p>
+A <b>Triangular Swap</b> is a <b>3-way teacher exchange</b>.
+Instead of swapping with one teacher directly, three teachers exchange stations so that everyone gets the county they requested.
+</p>
+
+<hr>
+
+<h3 style="color:#f59e0b;">
+Example
+</h3>
+
+<div style="
+background:#f8fafc;
+padding:15px;
+border-radius:10px;
+">
+
+<b>Teacher A</b><br>
+Current: <b>Kiambu</b><br>
+Wants: <b>Nyandarua</b>
+
+<br><br>
+
+<b>Teacher B</b><br>
+Current: <b>Nyandarua</b><br>
+Wants: <b>Nakuru</b>
+
+<br><br>
+
+<b>Teacher C</b><br>
+Current: <b>Nakuru</b><br>
+Wants: <b>Kiambu</b>
+
+</div>
+
+<h3 style="margin-top:20px;color:#16a34a;">
+Movement
+</h3>
+
+<div style="
+background:#ecfdf5;
+padding:15px;
+border-radius:10px;
+font-weight:bold;
+">
+
+Kiambu ➜ Nyandarua<br>
+
+Nyandarua ➜ Nakuru<br>
+
+Nakuru ➜ Kiambu
+
+</div>
+
+<p style="margin-top:20px;">
+✅ Every teacher gets the county they requested.
+</p>
+
+<p>
+Our system automatically scans all posted swap requests and detects these 3-way opportunities instantly.
+</p>
+
+<p>
+When a triangular match is found, you can unlock the contacts of all three teachers after payment.
+</p>
+
+<div style="
+margin-top:15px;
+padding:12px;
+background:#fef3c7;
+border-radius:10px;
+font-weight:bold;
+text-align:center;
+">
+
+💡 Triangular swaps greatly increase your chances of getting transferred, even when a direct swap is unavailable.
+
+</div>
+
+</div>
+
+`,
+
+confirmButtonText:"Got it 👍",
+
+confirmButtonColor:"#16a34a"
+
+});
+
+};
+
 </script>
 
 
