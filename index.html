@@ -404,45 +404,6 @@ button:hover{
   </div>
 
 
-  <!-- MATCHED SWAPS -->
-  <div class="stat" style="
-    background:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800') center/cover;
-    border-radius:16px;
-    position:relative;
-    overflow:hidden;
-    color:#fff;
-    padding:20px;
-  ">
-    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
-
-    <div style="position:relative;z-index:2;">
-      <h2 id="totalMatches" style="
-        background:linear-gradient(135deg,#0ea5e9,#2563eb);
-        color:#fff;
-        padding:15px;
-        border-radius:12px;
-        text-align:center;
-        font-size:32px;
-        font-weight:bold;
-        margin:10px 0;
-      ">
-        0
-      </h2>
-
-      <span>🎯 Matched Swaps</span>
-
-      <div style="
-        margin-top:8px;
-        font-size:12px;
-        opacity:.9;
-      ">
-        Direct swap opportunities
-      </div>
-
-    </div>
-  </div>
-
-
   <!-- TRIANGULAR SWAPS -->
   <div
     class="stat"
@@ -723,28 +684,65 @@ button:hover{
 </div>
 
 <div
-<!-- TOGGLE BUTTON -->
-<button
-  onclick="toggleTriangularSection()"
-  id="triangularToggleBtn"
-  style="
-    width:50%;
-    background:linear-gradient(135deg,#f59e0b,#d97706);
-    color:#fff;
-    border:none;
-    padding:14px;
-    border-radius:12px;
-    font-size:17px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:20px;
-    transition:.3s;
-  "
->
-    🔺 Open Triangular Swap Finder
-</button>
+<!-- ===========================
+     TRIANGULAR SWAP ACTIONS
+=========================== -->
 
-<!-- TRIANGULAR SWAP CARD -->
+<div style="
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+  flex-wrap:wrap;
+">
+
+  <!-- Open Finder -->
+  <button
+    onclick="toggleTriangularSection()"
+    id="triangularToggleBtn"
+    style="
+      flex:1;
+      min-width:220px;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      color:#fff;
+      border:none;
+      padding:15px;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:.3s;
+    "
+  >
+    🔺 Open Triangular Swap Finder
+  </button>
+
+  <!-- Guide -->
+  <button
+    onclick="showTriangularGuide()"
+    style="
+      flex:1;
+      min-width:220px;
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border:none;
+      padding:15px;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:.3s;
+    "
+  >
+    ℹ️ How Triangular Swaps Work
+  </button>
+
+</div>
+
+
+<!-- ===========================
+     TRIANGULAR SWAP CARD
+=========================== -->
+
 <div
   id="triangularSection"
   class="card"
@@ -761,18 +759,18 @@ button:hover{
   "
 >
 
-  <!-- DARK OVERLAY -->
+  <!-- Overlay -->
   <div style="
     position:absolute;
     inset:0;
     background:rgba(0,0,0,.60);
   "></div>
 
-  <!-- CONTENT -->
+  <!-- Content -->
   <div style="
     position:relative;
     z-index:2;
-    color:white;
+    color:#fff;
   ">
 
     <h3 style="
@@ -784,58 +782,54 @@ button:hover{
       margin-bottom:15px;
       font-size:20px;
       font-weight:700;
-      box-shadow:0 2px 8px rgba(0,0,0,.25);
     ">
       🔺 Find Triangular Swap
     </h3>
 
     <p style="
-      margin-bottom:15px;
-      line-height:1.6;
       text-align:center;
+      line-height:1.7;
+      margin-bottom:18px;
       color:#f9fafb;
-      font-weight:500;
     ">
-      Discover premium 3-way teacher transfer opportunities across Kenya.
-      Enter three counties and let the system detect a complete swap cycle.
+      Discover premium <b>3-way teacher transfer opportunities</b> across Kenya.
+      Our AI automatically scans all swap requests and identifies complete
+      triangular transfer cycles.
     </p>
 
-<button
-onclick="showTriangularGuide()"
-style="
-width:100%;
-margin-bottom:10px;
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
-color:white;
-border:none;
-padding:14px;
-border-radius:10px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-">
-ℹ️ How Triangular Swaps Work
-</button>
-
- <button onclick="findTriangularSwap()">
-    🔺 Scan Entire Database
-</button>
+    <button
+      onclick="findTriangularSwap()"
+      style="
+        width:100%;
+        background:linear-gradient(135deg,#16a34a,#15803d);
+        color:#fff;
+        border:none;
+        padding:15px;
+        border-radius:12px;
+        font-size:17px;
+        font-weight:bold;
+        cursor:pointer;
+      "
+    >
+      🔍 Scan Entire Database
+    </button>
 
     <div style="
-      margin-top:12px;
-      padding:10px;
+      margin-top:15px;
+      padding:12px;
       background:rgba(250,204,21,.18);
-      border:1px solid rgba(250,204,21,.4);
+      border:1px solid rgba(250,204,21,.45);
       border-radius:10px;
       text-align:center;
       font-size:13px;
+      color:#fff;
     ">
-      💎 Premium Service • Unlock all matching contacts for KES 1,000
+      💎 Premium Service • Unlock all 3 teacher contacts for <b>KES 1,000</b>
     </div>
 
     <div
       id="triangularResult"
-      style="margin-top:15px;"
+      style="margin-top:18px;"
     ></div>
 
   </div>
@@ -880,7 +874,6 @@ cursor:pointer;
 
 </div>
 <script type="module">
-
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
