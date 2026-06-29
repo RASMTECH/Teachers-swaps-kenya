@@ -1,3 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Swap Kenya</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#0f766e;
+  --primary-dark:#115e59;
+  --accent:#14b8a6;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --warning:#f59e0b;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER (works with inline image override too) */
+header{
+  color:white;
+}
+
+/* container */
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+/* =========================
+   STATS SECTION (ENHANCED)
+========================= */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+  margin-top:-25px;
+}
+
+.stat{
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  min-height:140px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+}
+
+.stat::before{
+  background:rgba(0,0,0,.35);
+}
+
+.stat h2{
+  font-size:30px;
+  color:white;
+}
+
+.stat span{
+  color:rgba(255,255,255,.85);
+}
+
+.stat > div{
+  position:relative;
+  z-index:2;
+  padding:20px;
+}
+
+/* =========================
+   GRID LAYOUT
+========================= */
+.grid{
+  display:grid;
+  grid-template-columns:380px 1fr;
+  gap:20px;
+  margin-top:25px;
+}
+
+/* =========================
+   CARD BASE
+========================= */
+.card{
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,.10);
+  position:relative;
+  overflow:hidden;
+  background:white;
+}
+
+
+.card > *{
+  position:relative;
+  z-index:2;
+}
+/* =========================
+   FORM ELEMENTS
+========================= */
+input,
+select,
+textarea{
+  width:50%;
+  padding:11px 14px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:10px;
+  outline:none;
+
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(6px);
+
+  color:#111827;
+  font-size:14px;
+
+  transition:.25s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  background:white;
+  box-shadow:
+    0 0 0 3px rgba(15,118,110,.15),
+    0 4px 12px rgba(0,0,0,.08);
+}
+
+textarea{
+  resize:vertical;
+  min-height:90px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+button{
+  width:100%;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  background:linear-gradient(
+    135deg,
+    var(--primary),
+    var(--accent)
+  );
+  color:white;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(15,118,110,.25);
+}
+#listings{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+/* =========================
+   PAYMENT BOX
+========================= */
+.payment-box{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+.payment-box strong{
+  color:#b45309;
+}
+
+/* =========================
+   SEARCH
+========================= */
+.search{
+  margin-bottom:15px;
+}
+
+/* =========================
+   LISTINGS
+========================= */
+.listings{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.swap-card{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  border-left:5px solid var(--primary);
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.swap-card.match{
+  border-left-color:#22c55e;
+  background:#f0fdf4;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-top:6px;
+}
+
+.badge-match{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.phone-lock{
+  color:#dc2626;
+  font-weight:700;
+}
+
+.meta{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:40px;
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    margin-top:10px;
+  }
+}
+
+</style>
+</style>
+</head>
+<body>
+
+<header class="hero-header" style="
+  background:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200') center/cover no-repeat;
+  padding:40px 20px;
+  border-radius:18px;
+  color:#fff;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+">
+
+  <div style="
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+  "></div>
+
+  <div style="position:relative; z-index:2;">
+<h1 style="
+  margin:0;
+  font-size:32px;
+  font-weight:800;
+  color:#ffffff;
+  text-shadow:0 2px 4px rgba(0,0,0,0.2);
+">
+  Teacher Swap Kenya
+</h1>
+
+<p style="
+  margin-top:10px;
+  font-size:16px;
+  color:#f9fafb;
+  line-height:1.5;
+  font-weight:500;
+">
+  Find transfer swap partners across Kenya.
+</p>
+  </div>
+</header>
+
+
+<div class="container">
+
+ 
+ 
+
+<!-- STATS -->
+<div class="stats">
+
+  <!-- TOTAL SWAPS -->
+  <div class="stat" style="
+    background:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800') center/cover;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    padding:20px;
+  ">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+
+    <div style="position:relative;z-index:2;">
+      <h2 id="totalSwaps" style="
+        background:linear-gradient(135deg,#facc15,#eab308);
+        color:#111827;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>📋 Total Swap Requests</span>
+    </div>
+  </div>
+
+
+  <!-- COUNTIES -->
+  <div class="stat" style="
+    background:url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800') center/cover;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    padding:20px;
+  ">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+
+    <div style="position:relative;z-index:2;">
+      <h2 id="totalCounties" style="
+        background:linear-gradient(135deg,#ef4444,#dc2626);
+        color:#fff;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>📍 Counties Represented</span>
+    </div>
+  </div>
+
+
+  <!-- SUBJECTS -->
+  <div class="stat" style="
+    background:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800') center/cover;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    padding:20px;
+  ">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+
+    <div style="position:relative;z-index:2;">
+      <h2 id="subjectCount" style="
+        background:linear-gradient(135deg,#22c55e,#16a34a);
+        color:#fff;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>📚 Subject Combinations</span>
+    </div>
+  </div>
+
+
+  <!-- MATCHED SWAPS -->
+  <div class="stat" style="
+    background:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800') center/cover;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    padding:20px;
+  ">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+
+    <div style="position:relative;z-index:2;">
+      <h2 id="totalMatches" style="
+        background:linear-gradient(135deg,#0ea5e9,#2563eb);
+        color:#fff;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>🎯 Matched Swaps</span>
+
+      <div style="
+        margin-top:8px;
+        font-size:12px;
+        opacity:.9;
+      ">
+        Direct swap opportunities
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- TRIANGULAR SWAPS -->
+  <div
+    class="stat"
+    onclick="document.getElementById('triangularSection').scrollIntoView({behavior:'smooth'})"
+    style="
+      background:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=800') center/cover;
+      border-radius:16px;
+      position:relative;
+      overflow:hidden;
+      color:#fff;
+      padding:20px;
+      cursor:pointer;
+    "
+  >
+    <div style="
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.55);
+    "></div>
+
+    <div style="position:relative;z-index:2;">
+
+      <h2 id="triangularCount" style="
+        background:linear-gradient(135deg,#8b5cf6,#7c3aed);
+        color:#fff;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>🔺 Available Triangular Swaps</span>
+
+      <div style="
+        margin-top:8px;
+        font-size:12px;
+        opacity:.9;
+      ">
+        Click to view matches
+      </div>
+
+    </div>
+  </div>
+
+</div>
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <div>
+
+<!-- SWAP FORM CARD -->
+<div class="card" style="
+  background:url('https://i.imgur.com/D8RXDZi.jpeg')
+  center center/cover no-repeat;
+  border-radius:18px;
+  padding:25px;
+  position:relative;
+  overflow:hidden;
+  min-height:750px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.15);
+">
+
+  <!-- LIGHT OVERLAY (IMAGE REMAINS CLEARLY VISIBLE) -->
+  <div style="
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+      135deg,
+      rgba(0,0,0,0.18),
+      rgba(16,185,129,0.10)
+    );
+  "></div>
+
+  <!-- FORM CONTENT -->
+  <div style="
+    position:relative;
+    z-index:2;
+    color:white;
+  ">
+
+    <h3 style="
+      background:linear-gradient(135deg,#facc15,#eab308);
+      color:#111827;
+      padding:12px 18px;
+      border-radius:10px;
+      text-align:center;
+      font-size:20px;
+      font-weight:700;
+      margin-bottom:15px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.12);
+    ">
+      📌 Post Swap Request
+    </h3>
+
+    <input id="phone" placeholder="📞 Phone Number">
+
+    <select id="level">
+      <option value="">🏫 Select Teaching Level</option>
+      <option value="Primary School">Primary</option>
+      <option value="Junior School">Junior</option>
+      <option value="Senior School">Senior</option>
+    </select>
+
+    <h4>📍 Current Station</h4>
+
+    <select id="currentCounty">
+      <option value="">Select Current County</option>
+    </select>
+
+    <select id="currentSubCounty">
+      <option value="">Select Current Sub County</option>
+    </select>
+
+    <h4>🎯 Desired Swap Location</h4>
+
+    <select id="swapCounty">
+      <option value="">Select Desired County</option>
+    </select>
+
+    <select id="swapSubCounty">
+      <option value="">Select Desired Sub County</option>
+    </select>
+<select id="hardship">
+  <option value="No">📍 NO Hardship </option>
+  <option value="Yes">🔥 Hardship Area</option>
+</select>
+ <select id="subjects">
+
+  <option value="">📚 Select Subject Combination</option>
+ <optgroup label="🏫 Primary School">
+    <option>All Subjects</option>
+  
+
+ <optgroup label="🏫 Junior & senior School">
+ </optgroup>
+
+
+    <option>Mathematics / Physics</option>
+    <option>Mathematics / Chemistry</option>
+    <option>Mathematics / Biology</option>
+
+    <option>Physics / Chemistry</option>
+    <option>Physics / Biology</option>
+
+    <option>Chemistry / Biology</option>
+
+    <option>Computer Studies / Mathematics</option>
+    <option>Computer Studies / Physics</option>
+
+    <option>Agriculture / Biology</option>
+    <option>Agriculture / Chemistry</option>
+
+    <option>Home Science / Biology</option>
+    <option>Home Science / Chemistry</option>
+
+    <option>English / Literature</option>
+    <option>English / Kiswahili</option>
+
+    <option>Kiswahili / Literature</option>
+    <option>Kiswahili / CRE</option>
+   <option>Kiswahili / HISTORY </option>
+    <option>English / CRE</option>
+
+    <option>French / English</option>
+    <option>French / Kiswahili</option>
+
+    <option>German / English</option>
+
+    <option>Arabic / CRE</option>
+    <option>Arabic / Kiswahili</option>
+  <optgroup label="🌍 Humanities">
+
+    <option>History / CRE</option>
+    <option>History / Geography</option>
+
+    <option>Geography / CRE</option>
+    <option>Geography / History</option>
+
+    <option>History / Business Studies</option>
+
+    <option>Geography / Business Studies</option>
+
+    <option>CRE / History</option>
+    <option>CRE / Geography</option>
+
+    <option>IRE / History</option>
+    <option>IRE / Geography</option>
+  <optgroup label="💼 Business & Technical">
+
+    <option>Business Studies / Mathematics</option>
+    <option>Business Studies / Geography</option>
+
+    <option>Business Studies / Computer Studies</option>
+
+    <option>Accounting / Mathematics</option>
+
+    <option>Computer Studies / Business Studies</option>
+
+    <option>Agriculture / Business Studies</option>
+
+    <option>Home Science / Business Studies</option>
+
+  <optgroup label="🎨 Creative Arts">
+
+    <option>Music / English</option>
+    <option>Music / Kiswahili</option>
+
+    <option>Fine Art / History</option>
+    <option>Fine Art / Geography</option>
+
+    <option>Theatre Arts / English</option>
+
+  <optgroup label="⚽ Sports & Physical Education">
+
+    <option>Physical Education / Biology</option>
+    <option>Physical Education / Geography</option>
+
+    <option>Physical Education / Mathematics</option>
+
+    <option>Physical Education / Agriculture</option>
   </optgroup>
 
 </select>
@@ -242,3 +911,2339 @@
   </div>
 
 </div>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+get,
+  push,
+  set,
+  onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyB3MZBZEq3pXvrVe1tdwOU4ikPv9fI399s",
+  authDomain: "swaps-d98c7.firebaseapp.com",
+  projectId: "swaps-d98c7",
+  storageBucket: "swaps-d98c7.firebasestorage.app",
+  messagingSenderId: "967144702902",
+  appId: "1:967144702902:web:5b353c2fe5ac9a2c027717",
+  measurementId: "G-6VEHPNRCH5"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const swapsRef = ref(db, "teacherSwaps");
+
+let allSwaps = [];
+
+function maskPhone(phone){
+  if(!phone) return "";
+  if(phone.length < 8) return "07******";
+  return phone.substring(0,2) + "******" + phone.slice(-2);
+}
+
+// ================================
+// KENYA COUNTIES & SUBCOUNTIES
+// ================================
+
+const kenyaLocations = {
+
+"Mombasa": ["Changamwe", "Jomvu", "Kisauni", "Likoni", "Mvita", "Nyali"],
+  "Kwale": ["Msambweni", "Lunga Lunga", "Matuga", "Kinango"],
+  "Kilifi": ["Kilifi North", "Kilifi South", "Kaloleni", "Rabai", "Ganze", "Malindi", "Magarini"],
+ "Tana River": ["Galole", "Garsen", "Bura", "Galedyertu", "Bangal"],
+  "Lamu": ["Lamu East", "Lamu West"],
+  "Taita–Taveta": ["Mwatate", "Voi", "Taveta", "Wundanyi"],
+  "Garissa": ["Balambala", "Dadaab", "Fafi", "Garissa Township", "Hulugho", "Ijara", "Lagdera"],
+  "Wajir": ["Eldas", "Tarbaj", "Wajir North", "Wajir East", "Wajir West", "Wajir South", "Buna"],
+  "Mandera": ["Banisa", "Mandera West", "Mandera North", "Mandera South", "Mandera East", "Lafey"],
+  "Marsabit": ["Moyale", "North Horr", "Saku", "Laisamis"],
+  "Isiolo": ["Isiolo Central", "Merti", "Garbatulla"],
+  "Meru": ["Imenti North", "Imenti South", "Imenti Central", "Tigania East", "Tigania West", "Buuri", "North Imenti"],
+  "Tharaka-Nithi": ["Chuka/Igambang'ombe", "Maara", "Tharaka South", "Tharaka North"],
+  "Embu": ["Manyatta", "Runyenjes", "Mbeere North", "Mbeere South"],
+  "Kitui": ["Kitui Central", "Mwingi North", "Mwingi West", "Mwingi Central", "Kitui Rural", "Kitui South", "Kitui East", "Migwani"],
+  "Machakos": ["Masinga", "Yatta", "Kangundo", "Matungulu", "Kathiani", "Mavoko", "Machakos Town", "Mwaki"],
+  "Makueni": ["Mbooni", "Kaiti", "Kilome", "Mukaa", "Makueni", "Kibwezi East", "Kibwezi West"],
+  "Nyandarua": ["Ol Joro Orok", "Kinangop", "Kipipiri", "Ndaragwa", "Ol Kalou"],
+  "Nyeri": ["Tetu", "Nyeri Town", "Mathira", "Othaya", "Kieni", "Mukurweini"],
+  "Kirinyaga": ["Kirinyaga Central", "Kirinyaga West", "Mwea", "Gichugu"],
+  "Murang'a": ["Gatanga", "Kiharu", "Kigumo", "Kangema", "Mathioya", "Murang'a South"],
+  "Kiambu": [ "Githunguri","Kiambu","Kabete","Kiambaa","Ruiru","Limuru", "Lari", "Juja","Thika Town","Gatundu North","Gatundu South","Kikuyu"],
+  "Turkana": ["Turkana North", "Turkana West", "Turkana Central", "Loima", "Turkana South", "Turkana East"],
+  "West Pokot": ["West Pokot", "North Pokot", "Central Pokot", "Pokot South", "Kipkomo", "Kacheliba"],
+  "Samburu": ["Samburu East", "Samburu North", "Samburu West"],
+  "Trans Nzoia": ["Kwanza", "Endebess", "Saboti", "Kiminini", "Cherangany"],
+  "Uasin Gishu": ["Ainabkoi", "Kapseret", "Kesses", "Moiben", "Soy", "Turbo"],
+  "Elgeyo-Marakwet": ["Keiyo North", "Keiyo South", "Marakwet East", "Marakwet West"],
+  "Nandi": ["Aldai", "Chesumei", "Emgwen", "Mosop", "Nandi Hills", "Tinderet"],
+  "Baringo": ["Baringo Central", "Baringo North", "Baringo South", "Eldama Ravine", "Mogotio", "Tiaty"],
+  "Laikipia": ["Laikipia East", "Laikipia North", "Laikipia West"],
+  "Nakuru": ["Bahati", "Gilgil", "Kuresoi North", "Kuresoi South", "Molo", "Naivasha", "Nakuru Town East", "Nakuru Town West", "Rongai", "Subukia"],
+  "Narok": ["Narok East", "Narok North", "Narok South", "Narok West", "Trans Mara East", "Trans Mara West"],
+  "Kajiado": ["Isinya", "Kajiado Central", "Kajiado East", "Kajiado North", "Kajiado South"],
+  "Kericho": ["Ainamoi", "Belgut", "Bureti", "Kipkelion East", "Kipkelion West", "Soin/Sigowet"],
+  "Bomet": ["Bomet Central", "Bomet East", "Chepalungu", "Konoin", "Sotik"],
+  "Kakamega": ["Butere", "Ikolomani", "Khwisero", "Lugari", "Lurambi", "Malava", "Matungu", "Mumias East", "Mumias West", "Navakholo", "Shinyalu"],
+  "Vihiga": ["Emuhaya", "Hamisi", "Luanda", "Sabatia", "Vihiga"],
+  "Bungoma": ["Bumula", "Kabuchai", "Kanduyi", "Kimilili", "Mt. Elgon", "Sirisia", "Tongaren", "Webuye East", "Webuye West"],
+  "Busia": ["Budalangi", "Butula", "Funyula", "Matayos", "Nambale", "Teso North", "Teso South"],
+  "Siaya": ["Alego Usonga", "Bondo", "Gem", "Rarieda", "Ugenya", "Ugunja"],
+  "Kisumu": ["Kisumu East", "Kisumu West", "Kisumu Central", "Muhoroni", "Nyakach", "Nyando", "Seme"],
+  "Homa Bay": ["Homa Bay Town", "Kabondo Kasipul", "Kabondo East", "Mbita", "Ndhiwa", "Rachuonyo East", "Rachuonyo North", "Rachuonyo South", "Rangwe", "Suba North", "Suba South"],
+  "Migori": ["Awendo", "Kuria East", "Kuria West", "Nyatike", "Rongo", "Suna East", "Suna West", "Uriri"],
+  "Kisii": ["Bobasi", "Bomachoge Borabu", "Bomachoge Chache", "Bonchari", "Kitutu Chache North", "Kitutu Chache South", "Nyaribari Chache", "Nyaribari Masaba", "South Mugirango"],
+  "Nyamira": ["Borabu", "Manga", "Masaba North", "Nyamira North", "Nyamira South"],
+  "Nairobi City": ["Dagoretti North", "Dagoretti South", "Embakasi Central", "Embakasi East", "Embakasi North", "Embakasi South", "Embakasi West", "Kamukunji", "Kasarani", "Lang'ata", "Makadara", "Mathare", "Roysambu", "Ruaraka", "Starehe", "Westlands"]
+};
+// =================================
+// POPULATE COUNTIES
+// =================================
+
+function populateCounties(){
+
+  const currentCounty =
+  document.getElementById("currentCounty");
+
+  const swapCounty =
+  document.getElementById("swapCounty");
+
+  currentCounty.innerHTML =
+  '<option value="">Current County</option>';
+
+  swapCounty.innerHTML =
+  '<option value="">Desired County</option>';
+
+  Object.keys(kenyaLocations)
+  .sort()
+  .forEach(county=>{
+
+    currentCounty.innerHTML +=
+    `<option value="${county}">
+      ${county}
+    </option>`;
+
+    swapCounty.innerHTML +=
+    `<option value="${county}">
+      ${county}
+    </option>`;
+  });
+
+}
+
+populateCounties();
+
+// =================================
+// CURRENT SUBCOUNTIES
+// =================================
+
+document
+.getElementById("currentCounty")
+.addEventListener("change",function(){
+
+  const sub =
+  document.getElementById("currentSubCounty");
+
+  sub.innerHTML =
+  '<option value="">Select Sub County</option>';
+
+  (kenyaLocations[this.value] || [])
+  .forEach(item=>{
+
+    sub.innerHTML +=
+    `<option value="${item}">
+      ${item}
+    </option>`;
+
+  });
+
+});
+
+// =================================
+// SWAP SUBCOUNTIES
+// =================================
+
+document
+.getElementById("swapCounty")
+.addEventListener("change",function(){
+
+  const sub =
+  document.getElementById("swapSubCounty");
+
+  sub.innerHTML =
+  '<option value="">Select Desired Sub County</option>';
+
+  (kenyaLocations[this.value] || [])
+  .forEach(item=>{
+
+    sub.innerHTML +=
+    `<option value="${item}">
+      ${item}
+    </option>`;
+
+  });
+
+});
+window.postSwap = async function(){
+
+  const btn = document.querySelector(
+    'button[onclick="postSwap()"]'
+  );
+
+  try{
+
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Posting...";
+
+    // ==========================
+    // AUTO GENERATED TEACHER NAME
+    // ==========================
+
+    const generatedName =
+      "Teacher " + Date.now().toString().slice(-6);
+
+    // ==========================
+    // PREMIUM COUNTIES
+    // ==========================
+
+    const premiumCounties = [
+      "Nairobi",
+      "Mombasa",
+      "Kisumu"
+    ];
+
+    const hardship =
+      document.getElementById("hardship")?.value || "No";
+
+    const currentCounty =
+      document.getElementById("currentCounty")?.value?.trim() || "";
+
+    const swapCounty =
+      document.getElementById("swapCounty")?.value?.trim() || "";
+
+    // ==========================
+    // AUTO PRICING
+    // ==========================
+
+    let charge = 200;
+
+    if(hardship === "Yes"){
+      charge = 500;
+    }
+    else if(
+      premiumCounties.includes(currentCounty) ||
+      premiumCounties.includes(swapCounty)
+    ){
+      charge = 400;
+    }
+
+    // ==========================
+    // PHONE CLEANUP
+    // ==========================
+
+    let phone =
+      document.getElementById("phone")?.value?.trim() || "";
+
+    phone = phone.replace(/\s+/g,'');
+
+    // Convert 2547xxxxxxx -> 07xxxxxxx
+    if(phone.startsWith("254")){
+      phone = "0" + phone.substring(3);
+    }
+
+    // ==========================
+    // VALIDATION
+    // ==========================
+
+    if(!phone){
+      Swal.fire(
+        "Missing Phone",
+        "Please enter your phone number.",
+        "warning"
+      );
+      return;
+    }
+
+    const phoneRegex =
+      /^(07\d{8}|01\d{8})$/;
+
+    if(!phoneRegex.test(phone)){
+      Swal.fire(
+        "Invalid Phone",
+        "Enter a valid Kenyan phone number.",
+        "warning"
+      );
+      return;
+    }
+
+    const level =
+      document.getElementById("level")?.value?.trim() || "";
+
+    if(!level){
+      Swal.fire(
+        "Missing Level",
+        "Please select teaching level.",
+        "warning"
+      );
+      return;
+    }
+
+    if(!currentCounty){
+      Swal.fire(
+        "Missing County",
+        "Please select your current county.",
+        "warning"
+      );
+      return;
+    }
+
+    if(!swapCounty){
+      Swal.fire(
+        "Missing Destination",
+        "Please select desired county.",
+        "warning"
+      );
+      return;
+    }
+
+    // ==========================
+    // CHECK DUPLICATE PHONE
+    // ==========================
+
+    const existingSnapshot = await get(swapsRef);
+
+    if(existingSnapshot.exists()){
+
+      const swaps = existingSnapshot.val();
+
+      const alreadyExists = Object.values(swaps).some(
+        swap => swap.phone === phone
+      );
+
+      if(alreadyExists){
+
+        Swal.fire({
+          icon:"warning",
+          title:"Swap Already Exists",
+          text:"A swap request already exists for this phone number."
+        });
+
+        return;
+      }
+
+    }
+
+    // ==========================
+    // DATA OBJECT
+    // ==========================
+
+    const data = {
+
+      name: generatedName,
+
+      phone: phone,
+
+      level: level,
+
+      currentCounty: currentCounty,
+
+      currentSubCounty:
+        document.getElementById("currentSubCounty")?.value?.trim() || "",
+
+      swapCounty: swapCounty,
+
+      swapSubCounty:
+        document.getElementById("swapSubCounty")?.value?.trim() || "",
+
+      subjects:
+        document.getElementById("subjects")?.value?.trim() || "",
+
+      notes:
+        document.getElementById("notes")?.value?.trim() || "",
+
+      hardship: hardship,
+
+      charge: charge,
+
+      createdAt: Date.now(),
+
+      paid: false
+    };
+
+    // ==========================
+    // SAVE SWAP
+    // ==========================
+
+    const newSwapRef = push(swapsRef);
+
+    const swapId = newSwapRef.key;
+
+    await set(newSwapRef,{
+      ...data,
+      swapId
+    });
+
+    // ==========================
+    // SAVE OWNER PHONE
+    // ==========================
+
+    localStorage.setItem(
+      "myPhone",
+      phone
+    );
+
+    // ==========================
+    // RESET FORM
+    // ==========================
+
+    document.getElementById("phone").value = "";
+    document.getElementById("level").value = "";
+
+    document.getElementById("currentCounty").value = "";
+
+    document.getElementById("currentSubCounty").innerHTML =
+      '<option value="">Select Current Sub County</option>';
+
+    document.getElementById("swapCounty").value = "";
+
+    document.getElementById("swapSubCounty").innerHTML =
+      '<option value="">Select Desired Sub County</option>';
+
+    document.getElementById("subjects").value = "";
+
+    document.getElementById("notes").value = "";
+
+    const hardshipField =
+      document.getElementById("hardship");
+
+    if(hardshipField){
+      hardshipField.value = "No";
+    }
+
+    // ==========================
+    // SUCCESS
+    // ==========================
+
+    Swal.fire({
+      icon:"success",
+      title:"Swap Posted Successfully",
+      html:`
+        <div style="text-align:left">
+
+          <p>
+            Your swap request has been published.
+          </p>
+
+          <p>
+            👤 Profile ID:
+            <b>${generatedName}</b>
+          </p>
+
+          <p>
+            💰 Charge Applied:
+            <b>KES ${charge}</b>
+          </p>
+
+          <p>
+            ${hardship === "Yes"
+              ? "🔥 Hardship Swap"
+              : "📍 Normal Swap"}
+          </p>
+
+          <p style="margin-top:10px;">
+            ✅ Your phone number remains linked to your swap.
+          </p>
+
+          <p>
+            🔒 Other teachers must unlock your contact details.
+          </p>
+
+        </div>
+      `
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    Swal.fire(
+      "Error",
+      "Failed to save swap request.",
+      "error"
+    );
+
+  }finally{
+
+    btn.disabled = false;
+
+    btn.innerHTML =
+      "🚀 Post Swap Request";
+
+  }
+
+};
+function render(swaps){
+
+const container = document.getElementById("listings");
+
+if(!container) return;
+
+if(!swaps || swaps.length === 0){
+container.innerHTML =
+'<div class="empty">No swap requests found.</div>';
+return;
+}
+
+container.innerHTML = "";
+
+const myPhone = localStorage.getItem("myPhone");
+
+const premiumCounties = [
+"Nairobi",
+"Mombasa",
+"Kisumu"
+];
+
+swaps.forEach(item=>{
+const matchedTeacher = allSwaps.find(other =>
+
+    other !== item &&
+
+    other.level === item.level &&
+
+    other.currentCounty?.toLowerCase() === item.swapCounty?.toLowerCase() &&
+
+    other.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
+);
+
+const match = !!matchedTeacher;
+// =====================================
+// AI MATCH ANALYSIS
+// =====================================
+
+const directMatches = allSwaps.filter(other =>
+
+    other !== item &&
+
+    other.level === item.level &&
+
+    other.currentCounty?.toLowerCase() === item.swapCounty?.toLowerCase() &&
+
+    other.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
+);
+
+// ---------- TRIANGULAR ----------
+
+const triangularMatches = [];
+
+allSwaps.forEach(second=>{
+
+    if(second === item) return;
+    if(second.level !== item.level) return;
+
+    allSwaps.forEach(third=>{
+
+        if(
+            third === item ||
+            third === second
+        ) return;
+
+        if(third.level !== item.level) return;
+
+        if(
+
+            item.swapCounty?.toLowerCase() === second.currentCounty?.toLowerCase() &&
+
+            second.swapCounty?.toLowerCase() === third.currentCounty?.toLowerCase() &&
+
+            third.swapCounty?.toLowerCase() === item.currentCounty?.toLowerCase()
+
+        ){
+
+            triangularMatches.push({
+                second,
+                third
+            });
+
+        }
+
+    });
+
+});
+
+// ---------- FOUR WAY ----------
+
+const fourWayMatches = [];
+
+allSwaps.forEach(second=>{
+
+    if(second===item) return;
+
+    allSwaps.forEach(third=>{
+
+        if(
+            third===item ||
+            third===second
+        ) return;
+
+        allSwaps.forEach(fourth=>{
+
+            if(
+                fourth===item ||
+                fourth===second ||
+                fourth===third
+            ) return;
+
+            if(
+
+                item.swapCounty===second.currentCounty &&
+
+                second.swapCounty===third.currentCounty &&
+
+                third.swapCounty===fourth.currentCounty &&
+
+                fourth.swapCounty===item.currentCounty
+
+            ){
+
+                fourWayMatches.push({
+                    second,
+                    third,
+                    fourth
+                });
+
+            }
+
+        });
+
+    });
+
+});
+const isMine = myPhone === item.phone;
+
+const refCode =
+  (item.swapId && item.swapId.length > 6)
+  ? item.swapId.slice(-6).toUpperCase()
+  : "NO-REF";
+
+// =====================================
+// DETERMINE CHARGE
+// =====================================
+
+const hardshipStatus =
+  (item.hardship || "")
+  .toString()
+  .trim()
+  .toLowerCase();
+
+const charge = Number(
+  item.charge ??
+  (
+    hardshipStatus === "yes"
+      ? 500
+      : (
+          premiumCounties.includes(item.currentCounty) ||
+          premiumCounties.includes(item.swapCounty)
+        )
+        ? 400
+        : 200
+  )
+);
+
+let topBadge = "";
+
+if(charge === 500){
+
+  topBadge = `
+    <span style="
+      background:#dc2626;
+      color:white;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+    ">
+      🚧 HARDSHIP
+    </span>
+  `;
+
+}else if(charge === 400){
+
+  topBadge = `
+    <span style="
+      background:#ea580c;
+      color:white;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+    ">
+      🔥 HOT COUNTY
+    </span>
+  `;
+
+}
+
+let phoneHTML = "";
+
+if(isMine){
+
+  phoneHTML = `
+    <div style="
+      margin-top:10px;
+      padding:12px;
+      background:#f0fdf4;
+      border-radius:10px;
+      border-left:4px solid #16a34a;
+    ">
+      <p style="
+        color:#16a34a;
+        font-weight:700;
+        font-size:16px;
+        margin:0;
+      ">
+        📞 ${item.phone}
+
+        <span style="
+          background:#dcfce7;
+          color:#166534;
+          padding:4px 10px;
+          border-radius:20px;
+          font-size:12px;
+          margin-left:8px;
+        ">
+          MY POST
+        </span>
+      </p>
+    </div>
+  `;
+
+}else{
+
+  phoneHTML = `
+    <div style="
+      margin-top:10px;
+      padding:12px;
+      background:#fff7ed;
+      border-radius:10px;
+      border-left:4px solid #f59e0b;
+    ">
+
+      <p style="
+        color:#dc2626;
+        font-weight:700;
+        font-size:16px;
+        margin:0;
+      ">
+        📞 ${maskPhone(item.phone)} 🔒
+      </p>
+
+      <button
+    onclick="showPayment(
+  '${item.swapId}',
+  '${item.name}',
+  '${item.currentCounty}',
+  '${item.swapCounty}',
+  ${charge}
+)"
+        style="
+          margin-top:10px;
+          background:#f59e0b;
+          width:auto;
+          padding:10px 15px;
+          border:none;
+          border-radius:8px;
+          color:white;
+          font-weight:600;
+          cursor:pointer;
+        "
+      >
+        🔓 Unlock Contact
+      </button>
+
+    </div>
+  `;
+}
+
+const card = document.createElement("div");
+
+card.className =
+  "swap-card" + (match ? " match" : "");
+
+card.innerHTML = `
+
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  ">
+
+    <h3 style="margin:0;">
+      ${item.name || "Teacher"}
+    </h3>
+
+    ${topBadge}
+
+  </div>
+
+  <div style="
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:12px 0;
+  ">
+
+    <span style="
+      background:#e0f2fe;
+      color:#0369a1;
+      padding:5px 10px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:600;
+    ">
+      ${item.level || "Not Specified"}
+    </span>
+
+    <span style="
+      background:#ede9fe;
+      color:#6d28d9;
+      padding:5px 10px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:600;
+    ">
+      Ref: ${refCode}
+    </span>
+
+  </div>
+
+  <p>
+    <strong>📍 Current Station:</strong><br>
+    ${item.currentCounty || "-"}
+    (${item.currentSubCounty || "-"})
+  </p>
+
+  <br>
+
+  <p>
+    <strong>🎯 Wants Transfer To:</strong><br>
+    ${item.swapCounty || "-"}
+    (${item.swapSubCounty || "-"})
+  </p>
+
+  <br>
+
+  <p>
+    <strong>📚 Subjects:</strong><br>
+    ${item.subjects || "-"}
+  </p>
+
+  ${phoneHTML}
+
+${
+match
+?
+`
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#16a34a,#15803d);
+color:white;
+padding:15px;
+border-radius:12px;
+">
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+">
+🎉 DIRECT MATCH FOUND!
+</div>
+
+<div style="line-height:1.8">
+
+A teacher wants your current county.
+
+<br><br>
+
+<b>Current:</b>
+${matchedTeacher.currentCounty}
+
+➡️
+
+<b>Wants:</b>
+${matchedTeacher.swapCounty}
+
+<br><br>
+
+<b>Subjects:</b>
+${matchedTeacher.subjects}
+
+</div>
+
+<button
+
+onclick="showPayment(
+'${matchedTeacher.swapId}',
+'${matchedTeacher.name}',
+'${matchedTeacher.currentCounty}',
+'${matchedTeacher.swapCounty}',
+${Number(matchedTeacher.charge||200)}
+)"
+
+style="
+margin-top:12px;
+width:100%;
+background:#facc15;
+color:#111;
+padding:12px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🔓 Unlock Your Direct Match
+
+</button>
+
+</div>
+
+<!-- AI ANALYSIS -->
+
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:18px;
+border-radius:14px;
+color:white;
+border:2px solid #22c55e;
+">
+
+<div style="
+font-size:20px;
+font-weight:bold;
+color:#facc15;
+margin-bottom:12px;
+">
+
+🤖 AI Match Analysis
+
+</div>
+
+<div style="
+line-height:2;
+font-size:15px;
+">
+
+🎯 <b>Great News!</b>
+
+<br><br>
+
+✅ <b>${directMatches.length}</b> Direct Match(s)
+
+<br>
+
+🔺 <b>${triangularMatches.length}</b> Triangular Match(s)
+
+<br>
+
+🔄 <b>${fourWayMatches.length}</b> Four-Way Chain Match(s)
+
+</div>
+
+<button
+
+onclick="viewMyMatches('${item.swapId}')"
+
+style="
+margin-top:15px;
+width:100%;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+border:none;
+padding:13px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🚀 View All My Matches
+
+</button>
+
+</div>
+
+`
+:
+`
+
+<div style="
+margin-top:15px;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:18px;
+border-radius:14px;
+color:white;
+border:2px solid #334155;
+">
+
+<div style="
+font-size:20px;
+font-weight:bold;
+color:#facc15;
+margin-bottom:12px;
+">
+
+🤖 AI Match Analysis
+
+</div>
+
+<div style="
+line-height:2;
+font-size:15px;
+">
+
+AI searched thousands of swap requests.
+
+<br><br>
+
+✅ <b>${directMatches.length}</b> Direct Match(s)
+
+<br>
+
+🔺 <b>${triangularMatches.length}</b> Triangular Match(s)
+
+${
+triangularMatches.length
+
+?
+
+`
+<button
+onclick="showTriangularOptions('${item.swapId}')"
+style="
+margin-top:12px;
+width:100%;
+padding:12px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:#fff;
+border:none;
+border-radius:10px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+">
+🔺 View & Unlock ${triangularMatches.length} Triangular Match${triangularMatches.length>1?'es':''}
+</button>
+
+`
+
+:
+
+""
+
+}
+
+<br>
+
+🔄 <b>${fourWayMatches.length}</b> Four-Way Chain Match(s)
+
+</div>
+
+${
+directMatches.length ||
+triangularMatches.length ||
+fourWayMatches.length
+
+?
+
+`
+
+<button
+
+onclick="viewMyMatches('${item.swapId}')"
+
+style="
+margin-top:15px;
+width:100%;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+border:none;
+padding:13px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+">
+
+🚀 View All My Matches
+
+</button>
+
+`
+
+:
+
+`
+
+<div style="
+margin-top:15px;
+padding:12px;
+background:#fef3c7;
+color:#92400e;
+border-radius:10px;
+">
+
+No compatible teachers have been found yet.
+
+We'll continue scanning automatically as new swap requests are posted.
+
+</div>
+
+`
+
+}
+
+</div>
+
+`
+}
+
+`;
+
+container.appendChild(card);
+
+
+});
+
+}
+window.showTriangularOptions = function(swapId){
+
+    const first = allSwaps.find(x => x.swapId === swapId);
+
+    if(!first){
+        Swal.fire("Not found","","error");
+        return;
+    }
+
+    const triangles = [];
+
+    allSwaps.forEach(second=>{
+
+        if(second.swapId === first.swapId) return;
+
+        allSwaps.forEach(third=>{
+
+            if(
+                third.swapId === first.swapId ||
+                third.swapId === second.swapId
+            ) return;
+
+            if(
+
+                second.currentCounty === first.swapCounty &&
+
+                third.currentCounty === second.swapCounty &&
+
+                third.swapCounty === first.currentCounty
+
+            ){
+
+                triangles.push({
+                    second,
+                    third
+                });
+
+            }
+
+        });
+
+    });
+
+    if(triangles.length===0){
+
+        Swal.fire(
+            "No Triangular Match",
+            "No triangular swaps found.",
+            "info"
+        );
+
+        return;
+
+    }
+
+    let html = "";
+
+    triangles.forEach((t,index)=>{
+
+        html += `
+
+        <div style="
+            background:#f8fafc;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            padding:15px;
+            margin-bottom:15px;
+            text-align:left;
+        ">
+
+            <h3 style="
+                margin-top:0;
+                color:#2563eb;
+            ">
+                🔺 Triangle ${index+1}
+            </h3>
+
+            <b>Teacher 1</b><br>
+
+            👤 ${first.name}<br>
+
+            📍 ${first.currentCounty} ➜ ${first.swapCounty}
+
+            <hr>
+
+            <b>Teacher 2</b><br>
+
+            👤 ${t.second.name}<br>
+
+            📍 ${t.second.currentCounty} ➜ ${t.second.swapCounty}
+
+            <hr>
+
+            <b>Teacher 3</b><br>
+
+            👤 ${t.third.name}<br>
+
+            📍 ${t.third.currentCounty} ➜ ${t.third.swapCounty}
+
+            <br><br>
+
+            <button
+            onclick="unlockTriangularContacts(
+                '${first.swapId}',
+                '${t.second.swapId}',
+                '${t.third.swapId}'
+            )"
+            style="
+                width:100%;
+                background:#16a34a;
+                color:white;
+                border:none;
+                padding:12px;
+                border-radius:10px;
+                font-weight:bold;
+                cursor:pointer;
+            ">
+                🔓 Unlock This Triangle
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+    Swal.fire({
+
+        title:`🔺 ${triangles.length} Triangular Match(es)`,
+
+        width:800,
+
+        html:html,
+
+        confirmButtonText:"Close"
+
+    });
+
+};
+window.showPayment = function(
+  swapId,
+  teacherName,
+  currentCounty,
+  swapCounty,
+  charge = 200
+){
+
+  const refCode =
+    swapId.slice(-6).toUpperCase();
+
+  // =====================================
+  // DETERMINE CATEGORY FROM UNLOCK FEE
+  // =====================================
+
+  let category = "Normal Swap";
+  let badge = "";
+
+  if(Number(charge) === 500){
+
+    category = "Hardship Swap";
+
+    badge = `
+      <span style="
+        background:#dc2626;
+        color:white;
+        padding:6px 12px;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:700;
+      ">
+        🚧 HARDSHIP
+      </span>
+    `;
+
+  }else if(Number(charge) === 400){
+
+    category = "Hot County Swap";
+
+    badge = `
+      <span style="
+        background:#ea580c;
+        color:white;
+        padding:6px 12px;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:700;
+      ">
+        🔥 HOT
+      </span>
+    `;
+
+  }else{
+
+    badge = `
+      <span style="
+        background:#16a34a;
+        color:white;
+        padding:6px 12px;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:700;
+      ">
+        📍 NORMAL
+      </span>
+    `;
+
+  }
+Swal.fire({
+
+  title:'🔓 Unlock Contact',
+
+  width: window.innerWidth < 600 ? 330 : 500,
+
+  html:`
+
+    <div style="
+      text-align:left;
+      font-size:14px;
+      line-height:1.4;
+    ">
+
+      <div style="
+        background:#f8fafc;
+        border-left:4px solid #16a34a;
+        padding:10px;
+        border-radius:8px;
+        margin-bottom:10px;
+      ">
+
+        <div><b>👤 ${teacherName}</b></div>
+
+        <div style="margin-top:5px;">
+          📍 ${currentCounty}
+        </div>
+
+        <div>
+          🎯 ${swapCounty}
+        </div>
+
+        <div style="
+          margin-top:8px;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          gap:5px;
+        ">
+          ${badge}
+          <small><b>REF:</b> ${refCode}</small>
+        </div>
+
+      </div>
+
+      <div style="
+        background:#ecfeff;
+        border:1px solid #a5f3fc;
+        padding:12px;
+        border-radius:8px;
+        text-align:center;
+        margin-bottom:10px;
+      ">
+
+        <div style="
+          font-size:13px;
+          color:#0f766e;
+          font-weight:600;
+        ">
+          Unlock Fee
+        </div>
+
+        <div style="
+          font-size:28px;
+          font-weight:800;
+          color:#0f766e;
+          margin:4px 0;
+        ">
+          KES ${charge}
+        </div>
+
+      </div>
+
+      <div style="
+        background:#f0fdf4;
+        padding:12px;
+        border-radius:8px;
+        text-align:center;
+      ">
+
+        <div style="
+          font-weight:700;
+          margin-bottom:5px;
+        ">
+          📲 M-PESA
+        </div>
+
+        <div style="
+          color:#16a34a;
+          font-size:22px;
+          font-weight:800;
+        ">
+          0795054571
+        </div>
+
+        <small>
+          Send KES ${charge} then tap
+          <b>I Have Paid</b>
+        </small>
+
+      </div>
+
+      <div style="
+        margin-top:10px;
+        background:#fff7ed;
+        border-left:4px solid #f59e0b;
+        padding:8px;
+        border-radius:8px;
+        font-size:12px;
+      ">
+        Contact is released after payment verification.
+      </div>
+
+    </div>
+
+  `,
+
+  showCancelButton:true,
+
+  confirmButtonText:'✅ I Have Paid',
+
+  cancelButtonText:'Close',
+
+  confirmButtonColor:'#16a34a'
+
+}).then(result=>{
+
+    if(result.isConfirmed){
+const message =
+
+`UNLOCK REQUEST
+
+REF: ${refCode}
+
+Teacher: ${teacherName}
+
+From: ${currentCounty}
+To: ${swapCounty}
+
+Category: ${category}
+Fee: KES ${charge}
+
+Swap ID:
+${swapId}
+
+I have completed payment.
+Kindly verify and unlock contact.`;
+
+      window.open(
+        `https://wa.me/254792755676?text=${encodeURIComponent(message)}`,
+        '_blank'
+      );
+
+    }
+
+  });
+
+};
+
+window.viewMyMatches = function(swapId){
+
+    const item = allSwaps.find(x=>x.swapId===swapId);
+
+    if(!item) return;
+
+    let direct = 0;
+    let triangle = 0;
+    let four = 0;
+
+    let html = "";
+
+    // ================= DIRECT =================
+
+    const directMatches = allSwaps.filter(other=>
+
+        other!==item &&
+
+        other.level===item.level &&
+
+        other.currentCounty===item.swapCounty &&
+
+        other.swapCounty===item.currentCounty
+
+    );
+
+    if(directMatches.length){
+
+        direct = directMatches.length;
+
+        html += `
+        <h3 style="color:#16a34a">
+        🎯 Direct Matches
+        </h3>
+        `;
+
+        directMatches.forEach(m=>{
+
+            html += `
+            <div style="
+            background:#ecfdf5;
+            padding:12px;
+            border-radius:10px;
+            margin-bottom:10px;
+            ">
+
+            👤 <b>${m.name}</b><br>
+
+            📍 ${m.currentCounty} ➜ ${m.swapCounty}
+
+            </div>
+            `;
+
+        });
+
+    }
+
+    // ================= TRIANGLE =================
+
+    allSwaps.forEach(second=>{
+
+        if(second===item) return;
+
+        allSwaps.forEach(third=>{
+
+            if(third===item || third===second) return;
+
+            if(
+
+                item.swapCounty===second.currentCounty &&
+
+                second.swapCounty===third.currentCounty &&
+
+                third.swapCounty===item.currentCounty
+
+            ){
+
+                triangle++;
+
+            }
+
+        });
+
+    });
+
+    // ================= FOUR WAY =================
+
+    allSwaps.forEach(second=>{
+
+        if(second===item) return;
+
+        allSwaps.forEach(third=>{
+
+            if(third===item || third===second) return;
+
+            allSwaps.forEach(fourth=>{
+
+                if(
+                    fourth===item ||
+                    fourth===second ||
+                    fourth===third
+                ) return;
+
+                if(
+
+                    item.swapCounty===second.currentCounty &&
+
+                    second.swapCounty===third.currentCounty &&
+
+                    third.swapCounty===fourth.currentCounty &&
+
+                    fourth.swapCounty===item.currentCounty
+
+                ){
+
+                    four++;
+
+                }
+
+            });
+
+        });
+
+    });
+
+    html += `
+    <hr>
+
+    <div style="line-height:2">
+
+    🔺 <b>${triangle}</b> Triangular Match(s)
+
+    <br>
+
+    🔄 <b>${four}</b> Four-Way Match(s)
+
+    </div>
+    `;
+
+    Swal.fire({
+
+        title:"🤖 AI Match Report",
+
+        width:750,
+
+        html
+
+    });
+
+};
+window.filterListings = function(){
+
+  const term =
+    document.getElementById("searchBox")
+    .value
+    .toLowerCase();
+
+  const filtered = allSwaps.filter(x =>
+      (x.currentCounty || "").toLowerCase().includes(term)
+   || (x.swapCounty || "").toLowerCase().includes(term)
+   || (x.subjects || "").toLowerCase().includes(term)
+  );
+
+  render(filtered);
+};
+
+onValue(swapsRef, snapshot => {
+
+  const data = snapshot.val() || {};
+allSwaps = Object.entries(data).map(([key,value])=>({
+  swapId:key,
+  ...value
+}));
+
+  document.getElementById("totalSwaps").textContent =
+    allSwaps.length;
+const matches = countDirectMatches();
+
+const matchCounter =
+document.getElementById("totalMatches");
+
+if(matchCounter){
+
+    matchCounter.textContent = matches;
+
+}
+  const counties = new Set();
+  const subjectsSet = new Set();
+
+  allSwaps.forEach(x=>{
+    if(x.currentCounty)
+      counties.add(x.currentCounty);
+
+    if(x.subjects)
+      subjectsSet.add(x.subjects);
+  });
+
+  document.getElementById("totalCounties").textContent =
+    counties.size;
+
+  document.getElementById("subjectCount").textContent =
+    subjectsSet.size;
+const triangles = countTriangularSwaps();
+
+document.getElementById(
+  "triangularCount"
+).textContent = triangles;
+  render(allSwaps);
+findTriangularSwap();
+});
+function populateTriangularCounties(){
+
+const ids = [
+"triCountyA",
+"triCountyB",
+"triCountyC"
+];
+
+ids.forEach(id=>{
+
+const select =
+document.getElementById(id);
+
+if(!select) return;
+
+Object.keys(kenyaLocations)
+.sort()
+.forEach(county=>{
+
+select.innerHTML += `
+<option value="${county}">
+${county}
+</option>
+`;
+
+});
+
+});
+
+}
+
+populateTriangularCounties();
+window.findTriangularSwap = function(){
+
+const result=document.getElementById("triangularResult");
+
+const found=[];
+const used=new Set();
+
+// ============================
+// FIND ALL UNIQUE TRIANGLES
+// ============================
+
+for(let i=0;i<allSwaps.length;i++){
+
+    for(let j=0;j<allSwaps.length;j++){
+
+        for(let k=0;k<allSwaps.length;k++){
+
+            if(i===j||j===k||i===k) continue;
+
+            const A=allSwaps[i];
+            const B=allSwaps[j];
+            const C=allSwaps[k];
+
+            if(
+
+                A.swapCounty===B.currentCounty &&
+
+                B.swapCounty===C.currentCounty &&
+
+                C.swapCounty===A.currentCounty
+
+            ){
+
+                const key=[
+
+                    A.swapId,
+                    B.swapId,
+                    C.swapId
+
+                ].sort().join("-");
+
+                if(!used.has(key)){
+
+                    used.add(key);
+
+                    found.push({
+
+                        swap1:A,
+                        swap2:B,
+                        swap3:C,
+
+                        score:100
+
+                    });
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+// Highest score first
+found.sort((a,b)=>b.score-a.score);
+
+if(found.length===0){
+
+result.innerHTML=`
+
+<div style="
+background:#fee2e2;
+padding:20px;
+border-radius:14px;
+text-align:center;
+color:#991b1b;
+font-weight:bold;
+">
+
+❌ No triangular swap is currently available.
+
+<br><br>
+
+As more teachers register, new triangular matches will automatically appear.
+
+</div>
+
+`;
+
+return;
+
+}
+
+// ============================
+// HEADER
+// ============================
+
+let html=`
+
+<div style="
+background:linear-gradient(135deg,#0f172a,#1e293b);
+padding:20px;
+border-radius:16px;
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+margin-bottom:20px;
+">
+
+<h2 style="
+margin:0;
+color:#facc15;
+">
+🔺 ${found.length} Triangular Swap${found.length>1?"s":""} Found
+</h2>
+
+<span style="
+background:#16a34a;
+color:white;
+padding:8px 15px;
+border-radius:25px;
+font-weight:bold;
+">
+Auto Matched
+</span>
+
+</div>
+
+`;
+
+found.forEach((m,index)=>{
+
+html+=`
+
+<div style="
+background:#1f2937;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+color:white;
+box-shadow:0 8px 25px rgba(0,0,0,.25);
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+">
+
+<h3 style="
+margin:0;
+color:#facc15;
+">
+🔺 Match ${index+1}
+</h3>
+
+<span style="
+background:#22c55e;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+">
+⭐ Perfect Match
+</span>
+
+</div>
+
+<div style="
+margin-top:18px;
+background:#111827;
+padding:15px;
+border-radius:12px;
+line-height:2;
+">
+
+<b>Teacher 1</b><br>
+
+👤 ${m.swap1.name}<br>
+
+🏫 ${m.swap1.level||"-"}<br>
+
+📚 ${m.swap1.subjects||"-"}<br>
+
+📍 ${m.swap1.currentCounty}
+➡️
+${m.swap1.swapCounty}
+
+<hr style="border-color:#374151;">
+
+<b>Teacher 2</b><br>
+
+👤 ${m.swap2.name}<br>
+
+🏫 ${m.swap2.level||"-"}<br>
+
+📚 ${m.swap2.subjects||"-"}<br>
+
+📍 ${m.swap2.currentCounty}
+➡️
+${m.swap2.swapCounty}
+
+<hr style="border-color:#374151;">
+
+<b>Teacher 3</b><br>
+
+👤 ${m.swap3.name}<br>
+
+🏫 ${m.swap3.level||"-"}<br>
+
+📚 ${m.swap3.subjects||"-"}<br>
+
+📍 ${m.swap3.currentCounty}
+➡️
+${m.swap3.swapCounty}
+
+</div>
+
+<div style="
+margin-top:15px;
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+border-left:5px solid #22c55e;
+">
+
+<b>🔄 Swap Flow</b>
+
+<br><br>
+
+${m.swap1.currentCounty}
+
+➡️
+
+${m.swap2.currentCounty}
+
+➡️
+
+${m.swap3.currentCounty}
+
+➡️
+
+${m.swap1.currentCounty}
+
+</div>
+
+<div style="
+margin-top:15px;
+background:#fef9c3;
+color:#854d0e;
+padding:12px;
+border-radius:10px;
+font-weight:600;
+">
+
+💡 All three teachers can exchange stations simultaneously. Contact details remain hidden until payment is verified.
+
+</div>
+
+<button
+
+onclick="unlockTriangularContacts(
+'${m.swap1.swapId}',
+'${m.swap2.swapId}',
+'${m.swap3.swapId}'
+)"
+
+style="
+margin-top:18px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#dc2626,#991b1b);
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(220,38,38,.35);
+">
+
+🔓 Unlock All 3 Contacts
+(KES 1,000)
+
+</button>
+
+</div>
+
+`;
+
+});
+
+html+="</div>";
+
+result.innerHTML=html;
+
+};
+window.unlockTriangularContacts = function(id1, id2, id3){
+
+Swal.fire({
+
+title:'🔺 Unlock Triangular Swap',
+
+width:450,
+
+html:`
+
+<div style="text-align:center">
+
+<h2 style="color:#16a34a;margin-bottom:10px;">
+KES 1,000
+</h2>
+
+<p>
+Unlock all 3 teacher contacts involved in this triangular swap.
+</p>
+
+<div style="
+background:#f0fdf4;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+">
+
+<b>M-PESA</b>
+
+<h2 style="color:#16a34a">
+0721955804
+</h2>
+
+Pay KES 1,000 then click <b>I Have Paid</b>
+
+</div>
+
+</div>
+
+`,
+
+showCancelButton:true,
+confirmButtonText:'✅ I Have Paid',
+confirmButtonColor:'#16a34a'
+
+}).then(result=>{
+
+if(result.isConfirmed){
+
+// 🔍 FETCH FULL TEACHER DETAILS (IMPORTANT UPGRADE)
+const t1 = allSwaps.find(x => x.swapId === id1);
+const t2 = allSwaps.find(x => x.swapId === id2);
+const t3 = allSwaps.find(x => x.swapId === id3);
+
+// helper ref generator
+const ref = (x) =>
+  x?.swapId ? x.swapId.slice(-6).toUpperCase() : "NO-REF";
+
+const message = `🔺 TRIANGULAR SWAP UNLOCK
+
+💰 KES 1000 PAID
+
+👨‍🏫 TEACHER 1
+Name: ${t1?.name}
+Ref: ${ref(t1)}
+📍 ${t1?.currentCounty} ➜ ${t1?.swapCounty}
+📞 ${t1?.phone}
+
+👨‍🏫 TEACHER 2
+Name: ${t2?.name}
+Ref: ${ref(t2)}
+📍 ${t2?.currentCounty} ➜ ${t2?.swapCounty}
+📞 ${t2?.phone}
+
+👨‍🏫 TEACHER 3
+Name: ${t3?.name}
+Ref: ${ref(t3)}
+📍 ${t3?.currentCounty} ➜ ${t3?.swapCounty}
+📞 ${t3?.phone}
+
+🔐 ACTION REQUIRED:
+Verify payment and release contacts.
+
+System: Teacher Swap Kenya`;
+
+window.open(
+`https://wa.me/254792755676?text=${encodeURIComponent(message)}`,
+'_blank'
+);
+
+}
+
+});
+
+};
+
+function countTriangularSwaps(){
+
+  const found = new Set();
+
+  for(let i=0;i<allSwaps.length;i++){
+
+    for(let j=0;j<allSwaps.length;j++){
+
+      for(let k=0;k<allSwaps.length;k++){
+
+        if(i===j || j===k || i===k) continue;
+
+        const A = allSwaps[i];
+        const B = allSwaps[j];
+        const C = allSwaps[k];
+
+        const match =
+
+          A.swapCounty === B.currentCounty &&
+          B.swapCounty === C.currentCounty &&
+          C.swapCounty === A.currentCounty;
+
+        if(match){
+
+          const key =
+            [A.swapId,B.swapId,C.swapId]
+            .sort()
+            .join("-");
+
+          found.add(key);
+
+        }
+
+      }
+
+    }
+
+  }
+
+  return found.size;
+}
+
+
+window.toggleTriangularSection = function(){
+
+    const section = document.getElementById("triangularSection");
+    const btn = document.getElementById("triangularToggleBtn");
+
+    if(section.style.display === "none" || section.style.display === ""){
+
+        section.style.display = "block";
+        btn.innerHTML = "❌ Close Triangular Swap Finder";
+
+        section.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }else{
+
+        section.style.display = "none";
+        btn.innerHTML = "🔺 Open Triangular Swap Finder";
+
+    }
+
+};
+window.showTriangularGuide = function(){
+
+Swal.fire({
+
+title:"🔺 How Triangular Swaps Work",
+
+width:700,
+
+html:`
+
+<div style="
+text-align:left;
+line-height:1.8;
+font-size:15px;
+">
+
+<p>
+A <b>Triangular Swap</b> is a <b>3-way teacher exchange</b>.
+Instead of swapping with one teacher directly, three teachers exchange stations so that everyone gets the county they requested.
+</p>
+
+<hr>
+
+<h3 style="color:#f59e0b;">
+Example
+</h3>
+
+<div style="
+background:#f8fafc;
+padding:15px;
+border-radius:10px;
+">
+
+<b>Teacher A</b><br>
+Current: <b>Kiambu</b><br>
+Wants: <b>Nyandarua</b>
+
+<br><br>
+
+<b>Teacher B</b><br>
+Current: <b>Nyandarua</b><br>
+Wants: <b>Nakuru</b>
+
+<br><br>
+
+<b>Teacher C</b><br>
+Current: <b>Nakuru</b><br>
+Wants: <b>Kiambu</b>
+
+</div>
+
+<h3 style="margin-top:20px;color:#16a34a;">
+Movement
+</h3>
+
+<div style="
+background:#ecfdf5;
+padding:15px;
+border-radius:10px;
+font-weight:bold;
+">
+
+Kiambu ➜ Nyandarua<br>
+
+Nyandarua ➜ Nakuru<br>
+
+Nakuru ➜ Kiambu
+
+</div>
+
+<p style="margin-top:20px;">
+✅ Every teacher gets the county they requested.
+</p>
+
+<p>
+Our system automatically scans all posted swap requests and detects these 3-way opportunities instantly.
+</p>
+
+<p>
+When a triangular match is found, you can unlock the contacts of all three teachers after payment.
+</p>
+
+<div style="
+margin-top:15px;
+padding:12px;
+background:#fef3c7;
+border-radius:10px;
+font-weight:bold;
+text-align:center;
+">
+
+💡 Triangular swaps greatly increase your chances of getting transferred, even when a direct swap is unavailable.
+
+</div>
+
+</div>
+
+`,
+
+confirmButtonText:"Got it 👍",
+
+confirmButtonColor:"#16a34a"
+
+});
+
+};
+function countDirectMatches(){
+
+    const found = new Set();
+
+    allSwaps.forEach(first=>{
+
+        allSwaps.forEach(second=>{
+
+            if(first.swapId === second.swapId) return;
+
+            if(
+
+                first.currentCounty === second.swapCounty &&
+
+                first.swapCounty === second.currentCounty
+
+            ){
+
+                const key =
+
+                    [first.swapId, second.swapId]
+                    .sort()
+                    .join("-");
+
+                found.add(key);
+
+            }
+
+        });
+
+    });
+
+    return found.size;
+
+}
+</script>
+
+
+
+</body>
+</html>
