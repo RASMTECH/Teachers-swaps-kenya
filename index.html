@@ -265,45 +265,7 @@ button:hover{
 </style>
 </head>
 <body>
-<title>Teacher Swaps Kenya</title>
 
-<meta name="description"
-content="Find teacher transfer swap partners across Kenya. Direct swaps, triangular swaps and AI-powered matching.">
-
-<!-- Open Graph -->
-<meta property="og:title"
-content="Teacher Swaps Kenya">
-
-<meta property="og:description"
-content="Find teacher transfer swap partners across Kenya. Direct swaps, triangular swaps and AI-powered matching.">
-
-<meta property="og:image"
-content="https://i.imgur.com/D8RXDZi.jpeg">
-
-<meta property="og:url"
-content="https://nyotamtaani.co.ke">
-
-<meta property="og:type"
-content="website">
-
-<meta property="og:site_name"
-content="Teacher Swaps Kenya">
-
-<!-- Twitter / X -->
-<meta name="twitter:card"
-content="summary_large_image">
-
-<meta name="twitter:title"
-content="Teacher Swaps Kenya">
-
-<meta name="twitter:description"
-content="Find teacher transfer swap partners across Kenya.">
-
-<meta name="twitter:image"
-content="https://i.imgur.com/D8RXDZi.jpeg">
-
-<meta name="theme-color"
-content="#16a34a">
 <header class="hero-header" style="
   background:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200') center/cover no-repeat;
   padding:40px 20px;
@@ -438,6 +400,45 @@ content="#16a34a">
       </h2>
 
       <span>📚 Subject Combinations</span>
+    </div>
+  </div>
+
+
+  <!-- MATCHED SWAPS -->
+  <div class="stat" style="
+    background:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800') center/cover;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    padding:20px;
+  ">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+
+    <div style="position:relative;z-index:2;">
+      <h2 id="totalMatches" style="
+        background:linear-gradient(135deg,#0ea5e9,#2563eb);
+        color:#fff;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+        font-size:32px;
+        font-weight:bold;
+        margin:10px 0;
+      ">
+        0
+      </h2>
+
+      <span>🎯 Matched Swaps</span>
+
+      <div style="
+        margin-top:8px;
+        font-size:12px;
+        opacity:.9;
+      ">
+        Direct swap opportunities
+      </div>
+
     </div>
   </div>
 
@@ -1074,39 +1075,41 @@ window.postSwap = async function(){
     const generatedName =
       "Teacher " + Date.now().toString().slice(-6);
 
-  // ==========================
-// PREMIUM (HOT) COUNTIES
-// ==========================
+    // ==========================
+    // PREMIUM COUNTIES
+    // ==========================
 
-const premiumCounties = [
-  "Nairobi",
-  "Nairobi City",
-  "Mombasa",
-  "Kisumu",
-  "Kiambu"
-];
+    const premiumCounties = [
+      "Nairobi",
+      "Mombasa",
+      "Kisumu"
+    ];
 
-const hardship =
-  document.getElementById("hardship")?.value || "No";
+    const hardship =
+      document.getElementById("hardship")?.value || "No";
 
-const currentCounty =
-  document.getElementById("currentCounty")?.value?.trim() || "";
+    const currentCounty =
+      document.getElementById("currentCounty")?.value?.trim() || "";
 
-const swapCounty =
-  document.getElementById("swapCounty")?.value?.trim() || "";
+    const swapCounty =
+      document.getElementById("swapCounty")?.value?.trim() || "";
 
-// ==========================
-// AUTO PRICING
-// ==========================
+    // ==========================
+    // AUTO PRICING
+    // ==========================
 
-let charge = 200;
+    let charge = 200;
 
-if (hardship === "Yes") {
-  charge = 500;
-}
-else if (premiumCounties.includes(currentCounty)) {
-  charge = 400;
-}
+    if(hardship === "Yes"){
+      charge = 500;
+    }
+    else if(
+      premiumCounties.includes(currentCounty) ||
+      premiumCounties.includes(swapCounty)
+    ){
+      charge = 400;
+    }
+
     // ==========================
     // PHONE CLEANUP
     // ==========================
@@ -1368,16 +1371,12 @@ container.innerHTML = "";
 
 const myPhone = localStorage.getItem("myPhone");
 
-// ==========================
-// PREMIUM COUNTIES (HOT ZONES)
-// ==========================
 const premiumCounties = [
-  "Nairobi",
-  "Nairobi City",
-  "Mombasa",
-  "Kisumu",
-  "Kiambu"
+"Nairobi",
+"Mombasa",
+"Kisumu"
 ];
+
 swaps.forEach(item=>{
 const matchedTeacher = allSwaps.find(other =>
 
@@ -1517,7 +1516,10 @@ const charge = Number(
   (
     hardshipStatus === "yes"
       ? 500
-      : premiumCounties.includes(item.currentCounty)
+      : (
+          premiumCounties.includes(item.currentCounty) ||
+          premiumCounties.includes(item.swapCounty)
+        )
         ? 400
         : 200
   )
@@ -2534,7 +2536,16 @@ allSwaps = Object.entries(data).map(([key,value])=>({
 
   document.getElementById("totalSwaps").textContent =
     allSwaps.length;
+const matches = countDirectMatches();
 
+const matchCounter =
+document.getElementById("totalMatches");
+
+if(matchCounter){
+
+    matchCounter.textContent = matches;
+
+}
   const counties = new Set();
   const subjectsSet = new Set();
 
@@ -3163,7 +3174,41 @@ confirmButtonColor:"#16a34a"
 });
 
 };
+function countDirectMatches(){
 
+    const found = new Set();
+
+    allSwaps.forEach(first=>{
+
+        allSwaps.forEach(second=>{
+
+            if(first.swapId === second.swapId) return;
+
+            if(
+
+                first.currentCounty === second.swapCounty &&
+
+                first.swapCounty === second.currentCounty
+
+            ){
+
+                const key =
+
+                    [first.swapId, second.swapId]
+                    .sort()
+                    .join("-");
+
+                found.add(key);
+
+            }
+
+        });
+
+    });
+
+    return found.size;
+
+}
 </script>
 
 
